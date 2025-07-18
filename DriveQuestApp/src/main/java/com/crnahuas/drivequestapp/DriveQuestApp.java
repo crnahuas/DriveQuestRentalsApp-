@@ -1,9 +1,9 @@
 package com.crnahuas.drivequestapp;
 
+import com.crnahuas.drivequestapp.controlador.FlotillaManager;
+import com.crnahuas.drivequestapp.menuui.MenuUI;
+
 // Clase principal del sistema DriveQuest Rentals.
-// Punto de entrada del programa, donde se inicia la carga de datos,
-// se muestra el menú de usuario y se asegura la correcta ejecución
-// según la pauta de evaluación.
 public class DriveQuestApp {
     public static void main(String[] args) {
         // Crear instancia del gestor de flotilla
