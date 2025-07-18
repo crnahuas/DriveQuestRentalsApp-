@@ -5,29 +5,23 @@ import com.crnahuas.drivequestapp.menuui.MenuUI;
 
 // Clase principal del sistema DriveQuest Rentals.
 public class DriveQuestApp {
+
     public static void main(String[] args) {
-        // Crear instancia del gestor de flotilla
-        FlotillaManager flotillaManager = new FlotillaManager();
+        System.out.println("\n=== BIENVENIDO A DRIVEQUEST RENTALS ===");
 
-        // Cargar vehículos desde archivo en un hilo separado
-        Thread cargaThread = new Thread(() -> {
-            try {
-                flotillaManager.cargarVehiculosDesdeArchivo("vehiculos.txt");
-            } catch (Exception e) {
-                System.out.println("Error al cargar datos de vehículos: " + e.getMessage());
-            }
-        });
+        // Gestión de vehículos.
+        FlotillaManager gestor = new FlotillaManager();
 
-        cargaThread.start();
+        // Cargar vehículos desde archivo si existe.
+        gestor.cargarVehiculosDesdeArchivo("vehiculos.txt");
 
-        try {
-            cargaThread.join(); // Esperar que termine la carga
-        } catch (InterruptedException e) {
-            System.out.println("Carga interrumpida: " + e.getMessage());
-        }
-
-        // Iniciar interfaz de usuario por consola
-        MenuUI menu = new MenuUI(flotillaManager);
+        // Interfaz de usuario por consola.
+        MenuUI menu = new MenuUI(gestor);
         menu.iniciar();
+
+        // Guardar vehículos antes de salir.
+        gestor.guardarVehiculosEnArchivo("vehiculos.txt");
+
+        System.out.println("\nGracias por utilizar el sistema DriveQuest. Hasta pronto.");
     }
 }

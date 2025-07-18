@@ -5,6 +5,7 @@ import com.crnahuas.drivequestapp.modelo.Calculable;
 import com.crnahuas.drivequestapp.modelo.Vehiculo;
 import com.crnahuas.drivequestapp.modelo.VehiculoCarga;
 import com.crnahuas.drivequestapp.modelo.VehiculoPasajeros;
+import java.util.List;
 import java.util.Scanner;
 
 // Clase que representa el menú de usuario por consola.
@@ -13,11 +14,13 @@ public class MenuUI {
     private FlotillaManager gestor;
     private Scanner scanner;
 
+    // Constructor que recibe el gestor de flotilla y prepara el escáner.
     public MenuUI(FlotillaManager gestor) {
         this.gestor = gestor;
         this.scanner = new Scanner(System.in);
     }
 
+    // Método principal que inicia el menú y bucle de interacción.
     public void iniciar() {
         int opcion;
         do {
@@ -25,25 +28,42 @@ public class MenuUI {
             opcion = leerEntero("Seleccione una opción: ");
 
             switch (opcion) {
-                case 1 -> agregarVehiculo();
-                case 2 -> gestor.listarVehiculos();
-                case 3 -> mostrarBoletas();
-                case 4 -> gestor.mostrarArriendosLargos();
-                case 0 -> System.out.println("Saliendo del sistema...");
-                default -> System.out.println("Opción inválida.");
+                case 1 ->
+                    agregarVehiculo();
+                case 2 ->
+                    gestor.listarVehiculos();
+                case 3 ->
+                    mostrarBoletas();
+                case 4 ->
+                    gestor.mostrarArriendosLargos();
+                case 5 ->
+                    gestor.guardarVehiculosEnArchivo("vehiculos.txt");
+                case 6 ->
+                    gestor.cargarVehiculosDesdeArchivo("vehiculos.txt");
+                case 0 ->{
+                    System.out.println("Guardando vehículos...");
+                    gestor.guardarVehiculosEnArchivo("vehiculos.txt");
+                    System.out.println("Gracias por usar DriveQuest. ¡Hasta pronto!");
+                }
+                default ->
+                    System.out.println("Opción no válida. Intente nuevamente.");
             }
         } while (opcion != 0);
     }
 
+    //  Muestra el menú principal en consola.
     private void mostrarMenu() {
         System.out.println("\n==== MENÚ PRINCIPAL ====");
         System.out.println("1. Agregar vehículo");
         System.out.println("2. Listar vehículos");
         System.out.println("3. Mostrar boletas");
         System.out.println("4. Mostrar arriendos largos (>=7 días)");
+        System.out.println("5. Exportar vehículos a archivo");
+        System.out.println("6. Importar vehículos desde archivo");
         System.out.println("0. Salir");
     }
 
+    // Permite al usuario agregar un nuevo vehículo con validación.
     private void agregarVehiculo() {
         System.out.println("\n-- Agregar Vehículo --");
         System.out.println("Seleccione el tipo de vehículo:");
@@ -57,38 +77,48 @@ public class MenuUI {
         String marca = scanner.nextLine();
         int dias = leerEntero("Días de arriendo: ");
 
-        if (tipo == 1) {
-            double carga = leerDecimal("Carga máxima en kg: ");
-            VehiculoCarga vc = new VehiculoCarga(patente, marca, dias, carga);
-            if (gestor.agregarVehiculo(vc)) {
-                System.out.println("Vehículo de carga agregado con éxito.");
-            } else {
-                System.out.println("Error: Ya existe un vehículo con esa patente.");
+        switch (tipo) {
+            case 1 -> {
+                double carga = leerDecimal("Carga máxima en kg: ");
+                VehiculoCarga vc = new VehiculoCarga(patente, marca, dias, carga);
+                if (gestor.agregarVehiculo(vc)) {
+                    System.out.println("Vehículo de carga agregado exitosamente.");
+                } else {
+                    System.out.println("Error: La patente ya está registrada. Intente con otra.");
+                }
+                break;
             }
-        } else if (tipo == 2) {
-            int pasajeros = leerEntero("Cantidad de pasajeros: ");
-            VehiculoPasajeros vp = new VehiculoPasajeros(patente, marca, dias, pasajeros);
-            if (gestor.agregarVehiculo(vp)) {
-                System.out.println("Vehículo de pasajeros agregado con éxito.");
-            } else {
-                System.out.println("Error: Ya existe un vehículo con esa patente.");
+            case 2 -> {
+                int pasajeros = leerEntero("Cantidad de pasajeros: ");
+                VehiculoPasajeros vp = new VehiculoPasajeros(patente, marca, dias, pasajeros);
+                if (gestor.agregarVehiculo(vp)) {
+                    System.out.println("Vehículo de pasajeros agregado exitosamente.");
+                } else {
+                    System.out.println("Error: La patente ya está registrada. Intente con otra.");
+                }
+                break;
             }
-        } else {
-            System.out.println("Opción inválida.");
+            default ->
+                System.out.println("Opción no válida. Intente nuevamente.");
         }
     }
 
+    // Muestra las boletas individuales de cada vehículo implementado.
     private void mostrarBoletas() {
         System.out.println("\n-- Boletas de Arriendo --");
-        gestor.listarVehiculos();
-        System.out.println("\n(Mostrando boletas individuales...)");
-        for (Vehiculo v : gestor.listaVehiculos()) {
+        List<Vehiculo> lista = gestor.obtenerListaVehiculos();
+        if (lista.isEmpty()) {
+            System.out.println("No hay vehículos para mostrar boletas.");
+            return;
+        }
+        for (Vehiculo v : lista) {
             if (v instanceof Calculable c) {
                 c.mostrarBoleta();
             }
         }
     }
 
+    // Lee y valida un número entero desde consola.
     private int leerEntero(String mensaje) {
         while (true) {
             try {
@@ -100,6 +130,7 @@ public class MenuUI {
         }
     }
 
+    // Lee y valida un número decimal desde consola.
     private double leerDecimal(String mensaje) {
         while (true) {
             try {

@@ -5,7 +5,10 @@ import com.crnahuas.drivequestapp.modelo.VehiculoCarga;
 import com.crnahuas.drivequestapp.modelo.VehiculoPasajeros;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,90 +19,104 @@ import java.util.Map;
 // Clase auxiliar para la gestión de la flotilla de vehículos.
 public class FlotillaManager {
 
-    // Mapa para validar patentes.
-    private Map<String, Vehiculo> mapaVehiculos;
+    private Map<String, Vehiculo> mapaVehiculos; // Para validar patentes únicas
+    private List<Vehiculo> listaVehiculos; // Lista principal de vehículos
 
-    // Lista sincronizada para almacenamiento seguro.
-    private List<Vehiculo> listaVehiculos;
-
-    public List<Vehiculo> listaVehiculos() {
-     return listaVehiculos;
-    }
-    
-    // Constructor
+    // Constructor que inicializa las estructuras de datos.
     public FlotillaManager() {
-        this.mapaVehiculos = Collections.synchronizedMap(new HashMap<>());
-        this.listaVehiculos = Collections.synchronizedList(new ArrayList<>());
+        mapaVehiculos = new HashMap<>();
+        listaVehiculos = Collections.synchronizedList(new ArrayList<>());
     }
 
-    // Agrega un vehículo si la patente no está registrada.
+    // Agrega un vehículo a la flotilla, validando que la patente no esté duplicada.
     public boolean agregarVehiculo(Vehiculo v) {
-        if (!mapaVehiculos.containsKey(v.getPatente())) {
-            mapaVehiculos.put(v.getPatente(), v);
-            listaVehiculos.add(v);
-            return true;
+        if (mapaVehiculos.containsKey(v.getPatente())) {
+            return false; // Patente duplicada
         }
-        return false; // Ya existe un vehículo con esa patente
+        mapaVehiculos.put(v.getPatente(), v);
+        listaVehiculos.add(v);
+        return true;
     }
 
-    // Lista todos los vehículos registrados.
+    // Lista todos los vehículos registrados mostrando sus datos.
     public void listarVehiculos() {
         if (listaVehiculos.isEmpty()) {
             System.out.println("No hay vehículos registrados.");
         } else {
+            System.out.println("\n== Lista de Vehículos ==");
             for (Vehiculo v : listaVehiculos) {
                 v.mostrarDatos();
             }
         }
     }
 
-    // Muestra la cantidad de vehículos con arriendos de 7 días o más.
+    // Muestra los vehículos con arriendo igual o mayor a 7 días.
     public void mostrarArriendosLargos() {
-        List<Vehiculo> filtrados = listaVehiculos.stream()
-            .filter(v -> v.getDiasArriendo() >= 7)
-            .toList();
+        long cantidad = listaVehiculos.stream()
+                .filter(v -> v.getDiasArriendo() >= 7)
+                .count();
 
-        System.out.println("\nCantidad de vehículos con arriendo largo (>=7 días): " + filtrados.size());
-
-        if (filtrados.isEmpty()) {
-            System.out.println("No hay vehículos con arriendo largo.");
-        } else {
-            System.out.println("Vehículos con arriendo largo:");
-            for (Vehiculo v : filtrados) {
+        System.out.println("Cantidad de vehículos con arriendo largo (>=7 días): " + cantidad);
+        System.out.println("Vehículos con arriendo largo:");
+        for (Vehiculo v : listaVehiculos) {
+            if (v.getDiasArriendo() >= 7) {
                 v.mostrarDatos();
             }
         }
     }
 
-    // Carga los vehículos desde archivo de texto plano.
+    // Devuelve la lista de vehículos para uso externo (por ejemplo: interfaz).
+    public List<Vehiculo> obtenerListaVehiculos() {
+        return listaVehiculos;
+    }
+
+    // Guarda todos los vehículos en un archivo de texto plano.
+    public void guardarVehiculosEnArchivo(String archivo) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
+            for (Vehiculo v : listaVehiculos) {
+                writer.write(v.exportarComoTexto());
+                writer.newLine();
+            }
+            System.out.println("Vehículos guardados exitosamente en " + archivo);
+        } catch (IOException e) {
+            System.out.println("Error al guardar vehículos en archivo: " + e.getMessage());
+        }
+    }
+
+    // Carga vehículos desde un archivo de texto plano, ignorando líneas inválidas.
     public void cargarVehiculosDesdeArchivo(String archivo) {
-        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+        File file = new File(archivo);
+        if (!file.exists()) {
+            System.out.println("Archivo no encontrado: " + archivo);
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String linea;
-            while ((linea = br.readLine()) != null) {
+            while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",");
-                if (partes.length >= 5) {
-                    String tipo = partes[0];
-                    String patente = partes[1];
-                    String marca = partes[2];
-                    int dias = Integer.parseInt(partes[3]);
-                    String valor = partes[4];
+                if (partes.length < 5) {
+                    continue;
+                }
 
-                    Vehiculo v = null;
-                    if (tipo.equalsIgnoreCase("carga")) {
-                        double carga = Double.parseDouble(valor);
-                        v = new VehiculoCarga(patente, marca, dias, carga);
-                    } else if (tipo.equalsIgnoreCase("pasajeros")) {
-                        int pasajeros = Integer.parseInt(valor);
-                        v = new VehiculoPasajeros(patente, marca, dias, pasajeros);
-                    }
+                String tipo = partes[0];
+                String patente = partes[1];
+                String marca = partes[2];
+                int dias = Integer.parseInt(partes[3]);
 
-                    if (v != null) {
-                        agregarVehiculo(v);
-                    }
+                if (tipo.equalsIgnoreCase("carga")) {
+                    double carga = Double.parseDouble(partes[4]);
+                    VehiculoCarga vc = new VehiculoCarga(patente, marca, dias, carga);
+                    agregarVehiculo(vc);
+                } else if (tipo.equalsIgnoreCase("pasajeros")) {
+                    int pasajeros = Integer.parseInt(partes[4]);
+                    VehiculoPasajeros vp = new VehiculoPasajeros(patente, marca, dias, pasajeros);
+                    agregarVehiculo(vp);
                 }
             }
+            System.out.println("Vehículos cargados exitosamente desde " + archivo);
         } catch (IOException | NumberFormatException e) {
-            System.out.println("Error al cargar vehículos desde archivo: " + e.getMessage());
+            System.out.println("Error al cargar vehículos desde archivo: " + archivo + " (" + e.getMessage() + ")");
         }
     }
 }

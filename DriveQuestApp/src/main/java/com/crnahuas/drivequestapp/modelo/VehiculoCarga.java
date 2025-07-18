@@ -3,15 +3,14 @@ package com.crnahuas.drivequestapp.modelo;
 // Clase que representa un vehículo de carga.
 public class VehiculoCarga extends Vehiculo implements Calculable {
 
-    // Atributo.
-    private double cargaMaximaKg;
+    private double cargaMaximaKg; // Capacidad máxima de carga en kilogramos
 
-    // Constructor vacío.
+    // Constructor vacío requerido por la pauta.
     public VehiculoCarga() {
         super();
     }
 
-    // Constructor.
+    // Constructor sobrecargado para inicializar un vehículo de carga.
     public VehiculoCarga(String patente, String marca, int diasArriendo, double cargaMaximaKg) {
         this.patente = patente;
         this.marca = marca;
@@ -19,7 +18,6 @@ public class VehiculoCarga extends Vehiculo implements Calculable {
         this.cargaMaximaKg = cargaMaximaKg;
     }
 
-    // Getter y Setter.
     public double getCargaMaximaKg() {
         return cargaMaximaKg;
     }
@@ -32,34 +30,39 @@ public class VehiculoCarga extends Vehiculo implements Calculable {
         }
     }
 
-    // Datos vehículos.
+    // Muestra los datos del vehículo de carga.
     @Override
     public void mostrarDatos() {
-        System.out.println("\n--- Vehículo de Carga ---");
+        System.out.println("[Carga] Patente: " + patente + ", Marca: " + marca + ", Días: " + diasArriendo + " días, Carga: " + cargaMaximaKg + " kg");
+    }
+
+    // Calcula y muestra el detalle de la boleta del vehículo de carga.
+    @Override
+    public void mostrarBoleta() {
+        double subtotal = diasArriendo * 50000; // Precio fijo diario para vehículos de carga
+        double iva = subtotal * IVA;
+        double descuento = 0;
+
+        // Supuesto: Aplica descuento si la carga máxima es mayor a 500 kg
+        if (cargaMaximaKg > 500) {
+            descuento = subtotal * DESCUENTO_CARGA;
+        }
+
+        double total = subtotal + iva - descuento;
+
+        System.out.println("\n=== Boleta Vehículo de Carga ===");
         System.out.println("Patente: " + patente);
         System.out.println("Marca: " + marca);
         System.out.println("Días de arriendo: " + diasArriendo);
-        System.out.println("Carga máxima: " + cargaMaximaKg + " kg");
+        System.out.println("Subtotal: $" + String.format("%,.0f", subtotal));
+        System.out.println("IVA (19%): $" + String.format("%,.0f", iva));
+        System.out.println("Descuento (" + (DESCUENTO_CARGA * 100) + "%): $" + String.format("%,.0f", descuento));
+        System.out.println("TOTAL: $" + String.format("%,.0f", total));
     }
 
-    // Cálculo.
+    // Exporta los datos del vehículo de carga como texto plano.
     @Override
-    public void mostrarBoleta() {
-        System.out.println("\n--- Boleta de Arriendo (Vehículo de Carga) ---");
-        double valorBase = diasArriendo * 50000; // Suponemos $50.000 por día de arriendo.
-        double iva = valorBase * IVA;
-
-        double descuento = 0;
-        // Supuesto: se aplica 7% de descuento si la carga supera los 500 kg.
-        if (cargaMaximaKg > 500) {
-            descuento = valorBase * DESCUENTO_CARGA;
-        }
-
-        double total = valorBase + iva - descuento;
-
-        System.out.printf("Valor base: $%.2f\n", valorBase);
-        System.out.printf("IVA (19%%): $%.2f\n", iva);
-        System.out.printf("Descuento: $%.2f\n", descuento);
-        System.out.printf("Total a pagar: $%.2f\n", total);
+    public String exportarComoTexto() {
+        return String.format("carga,%s,%s,%d,%.2f", patente, marca, diasArriendo, cargaMaximaKg);
     }
 }

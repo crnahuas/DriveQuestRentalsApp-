@@ -3,15 +3,14 @@ package com.crnahuas.drivequestapp.modelo;
 // Clase que representa un vehículo de pasajeros.
 public class VehiculoPasajeros extends Vehiculo implements Calculable {
 
-    // Atributo.
-    private int cantidadPasajeros;
+    private int cantidadPasajeros; // Número máximo de pasajeros permitidos
 
-    // Constructor vacío.
+    // Constructor vacío requerido por la pauta.
     public VehiculoPasajeros() {
         super();
     }
 
-    // Constructor.
+    // Constructor sobrecargado para inicializar un vehículo de pasajeros.
     public VehiculoPasajeros(String patente, String marca, int diasArriendo, int cantidadPasajeros) {
         this.patente = patente;
         this.marca = marca;
@@ -19,7 +18,6 @@ public class VehiculoPasajeros extends Vehiculo implements Calculable {
         this.cantidadPasajeros = cantidadPasajeros;
     }
 
-    // Getter y Setter.
     public int getCantidadPasajeros() {
         return cantidadPasajeros;
     }
@@ -32,34 +30,39 @@ public class VehiculoPasajeros extends Vehiculo implements Calculable {
         }
     }
 
-    // Datos vehículos.
+    // Muestra los datos del vehículo de pasajeros.
     @Override
     public void mostrarDatos() {
-        System.out.println("\n--- Vehículo de Pasajeros ---");
+        System.out.println("[Pasajeros] Patente: " + patente + ", Marca: " + marca + ", Días: " + diasArriendo + " días, Pasajeros: " + cantidadPasajeros);
+    }
+
+    // Calcula y muestra el detalle de la boleta del vehículo de pasajeros.
+    @Override
+    public void mostrarBoleta() {
+        double subtotal = diasArriendo * 40000; // Precio fijo diario para pasajeros
+        double iva = subtotal * IVA;
+        double descuento = 0;
+
+        // Supuesto: Aplica descuento si hay más de 4 pasajeros
+        if (cantidadPasajeros > 4) {
+            descuento = subtotal * DESCUENTO_PASAJEROS;
+        }
+
+        double total = subtotal + iva - descuento;
+
+        System.out.println("\n=== Boleta Vehículo de Pasajeros ===");
         System.out.println("Patente: " + patente);
         System.out.println("Marca: " + marca);
         System.out.println("Días de arriendo: " + diasArriendo);
-        System.out.println("Cantidad de pasajeros: " + cantidadPasajeros);
+        System.out.println("Subtotal: $" + String.format("%,.0f", subtotal));
+        System.out.println("IVA (19%): $" + String.format("%,.0f", iva));
+        System.out.println("Descuento (" + (DESCUENTO_PASAJEROS * 100) + "%): $" + String.format("%,.0f", descuento));
+        System.out.println("TOTAL: $" + String.format("%,.0f", total));
     }
 
-    // Cálculo.
+    // Exporta los datos del vehículo de pasajeros como texto plano.
     @Override
-    public void mostrarBoleta() {
-        System.out.println("\n--- Boleta de Arriendo (Vehículo de Pasajeros) ---");
-        double valorBase = diasArriendo * 40000; // Suponemos $40.000 por día de arriendo
-        double iva = valorBase * IVA;
-
-        double descuento = 0;
-        // Supuesto: se aplica 12% de descuento si la cantidad de pasajeros es mayor a 4
-        if (cantidadPasajeros > 4) {
-            descuento = valorBase * DESCUENTO_PASAJEROS;
-        }
-
-        double total = valorBase + iva - descuento;
-
-        System.out.printf("Valor base: $%.2f\n", valorBase);
-        System.out.printf("IVA (19%%): $%.2f\n", iva);
-        System.out.printf("Descuento: $%.2f\n", descuento);
-        System.out.printf("Total a pagar: $%.2f\n", total);
+    public String exportarComoTexto() {
+        return String.format("pasajeros,%s,%s,%d,%d", patente, marca, diasArriendo, cantidadPasajeros);
     }
 }
