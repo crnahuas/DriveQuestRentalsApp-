@@ -19,26 +19,26 @@ import java.util.Map;
 // Clase auxiliar para la gestión de la flotilla de vehículos.
 public class FlotillaManager {
 
-    private Map<String, Vehiculo> mapaVehiculos; // Para validar patentes únicas
-    private List<Vehiculo> listaVehiculos; // Lista principal de vehículos
+    private Map<String, Vehiculo> mapaVehiculos; // Valida patentes únicas
+    private List<Vehiculo> listaVehiculos; // Lista de vehículos.
 
-    // Constructor que inicializa las estructuras de datos.
+    // Constructor.
     public FlotillaManager() {
         mapaVehiculos = new HashMap<>();
         listaVehiculos = Collections.synchronizedList(new ArrayList<>());
     }
 
-    // Agrega un vehículo a la flotilla, validando que la patente no esté duplicada.
+    // Agrega un vehículo, validando que la patente no esté duplicada.
     public boolean agregarVehiculo(Vehiculo v) {
         if (mapaVehiculos.containsKey(v.getPatente())) {
-            return false; // Patente duplicada
+            return false; // Patente duplicada.
         }
         mapaVehiculos.put(v.getPatente(), v);
         listaVehiculos.add(v);
         return true;
     }
 
-    // Lista todos los vehículos registrados mostrando sus datos.
+    // Lista de vehículos registrados mostrando sus datos.
     public void listarVehiculos() {
         if (listaVehiculos.isEmpty()) {
             System.out.println("No hay vehículos registrados.");
@@ -56,7 +56,7 @@ public class FlotillaManager {
                 .filter(v -> v.getDiasArriendo() >= 7)
                 .count();
 
-        System.out.println("Cantidad de vehículos con arriendo largo (>=7 días): " + cantidad);
+        System.out.println("Cantidad de vehículos con arriendo largo (Desde 7 días): " + cantidad);
         System.out.println("Vehículos con arriendo largo:");
         for (Vehiculo v : listaVehiculos) {
             if (v.getDiasArriendo() >= 7) {
@@ -65,12 +65,12 @@ public class FlotillaManager {
         }
     }
 
-    // Devuelve la lista de vehículos para uso externo (por ejemplo: interfaz).
+    // Devuelve la lista de vehículos para uso externo.
     public List<Vehiculo> obtenerListaVehiculos() {
         return listaVehiculos;
     }
 
-    // Guarda todos los vehículos en un archivo de texto plano.
+    // Guarda todos los vehículos en un archivo txt.
     public void guardarVehiculosEnArchivo(String archivo) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
             for (Vehiculo v : listaVehiculos) {
@@ -83,7 +83,7 @@ public class FlotillaManager {
         }
     }
 
-    // Carga vehículos desde un archivo de texto plano, ignorando líneas inválidas.
+    // Carga vehículos desde un archivo txt, ignorando líneas inválidas.
     public void cargarVehiculosDesdeArchivo(String archivo) {
         File file = new File(archivo);
         if (!file.exists()) {

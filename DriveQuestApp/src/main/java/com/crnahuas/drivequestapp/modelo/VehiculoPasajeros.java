@@ -3,14 +3,14 @@ package com.crnahuas.drivequestapp.modelo;
 // Clase que representa un vehículo de pasajeros.
 public class VehiculoPasajeros extends Vehiculo implements Calculable {
 
-    private int cantidadPasajeros; // Número máximo de pasajeros permitidos
+    private int cantidadPasajeros; // Número máximo de pasajeros permitidos.
 
-    // Constructor vacío requerido por la pauta.
+    // Constructor vacío.
     public VehiculoPasajeros() {
         super();
     }
 
-    // Constructor sobrecargado para inicializar un vehículo de pasajeros.
+    // Constructor.
     public VehiculoPasajeros(String patente, String marca, int diasArriendo, int cantidadPasajeros) {
         this.patente = patente;
         this.marca = marca;
@@ -23,10 +23,10 @@ public class VehiculoPasajeros extends Vehiculo implements Calculable {
     }
 
     public void setCantidadPasajeros(int cantidadPasajeros) {
-        if (cantidadPasajeros > 0) {
+        if (cantidadPasajeros > 0 && cantidadPasajeros <= 45) { // Suponiendo máximo 45, límite razonable para bus.
             this.cantidadPasajeros = cantidadPasajeros;
         } else {
-            throw new IllegalArgumentException("La cantidad de pasajeros debe ser mayor a 0.");
+            throw new IllegalArgumentException("La cantidad de pasajeros debe ser entre 1 y 45.");
         }
     }
 
@@ -39,11 +39,11 @@ public class VehiculoPasajeros extends Vehiculo implements Calculable {
     // Calcula y muestra el detalle de la boleta del vehículo de pasajeros.
     @Override
     public void mostrarBoleta() {
-        double subtotal = diasArriendo * 40000; // Precio fijo diario para pasajeros
+        double subtotal = diasArriendo * 40000; // Precio fijo diario para pasajeros.
         double iva = subtotal * IVA;
         double descuento = 0;
 
-        // Supuesto: Aplica descuento si hay más de 4 pasajeros
+        // Supuesto: Aplica descuento si hay más de 4 pasajeros.
         if (cantidadPasajeros > 4) {
             descuento = subtotal * DESCUENTO_PASAJEROS;
         }
@@ -60,7 +60,7 @@ public class VehiculoPasajeros extends Vehiculo implements Calculable {
         System.out.println("TOTAL: $" + String.format("%,.0f", total));
     }
 
-    // Exporta los datos del vehículo de pasajeros como texto plano.
+    // Exporta los datos del vehículo de pasajeros.
     @Override
     public String exportarComoTexto() {
         return String.format("pasajeros,%s,%s,%d,%d", patente, marca, diasArriendo, cantidadPasajeros);

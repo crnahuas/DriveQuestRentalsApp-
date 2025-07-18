@@ -43,7 +43,7 @@ public class MenuUI {
                 case 0 ->{
                     System.out.println("Guardando vehículos...");
                     gestor.guardarVehiculosEnArchivo("vehiculos.txt");
-                    System.out.println("Gracias por usar DriveQuest. ¡Hasta pronto!");
+                    System.out.println("Gracias por usar DriveQuest Rental. ¡Hasta pronto!");
                 }
                 default ->
                     System.out.println("Opción no válida. Intente nuevamente.");
@@ -57,9 +57,9 @@ public class MenuUI {
         System.out.println("1. Agregar vehículo");
         System.out.println("2. Listar vehículos");
         System.out.println("3. Mostrar boletas");
-        System.out.println("4. Mostrar arriendos largos (>=7 días)");
-        System.out.println("5. Exportar vehículos a archivo");
-        System.out.println("6. Importar vehículos desde archivo");
+        System.out.println("4. Mostrar arriendos largos (Desde 7 días)");
+        System.out.println("5. Exportar vehículos");
+        System.out.println("6. Importar vehículos");
         System.out.println("0. Salir");
     }
 
@@ -84,7 +84,7 @@ public class MenuUI {
                 if (gestor.agregarVehiculo(vc)) {
                     System.out.println("Vehículo de carga agregado exitosamente.");
                 } else {
-                    System.out.println("Error: La patente ya está registrada. Intente con otra.");
+                    System.out.println("La patente ya está registrada. Intente con otra.");
                 }
                 break;
             }
@@ -94,7 +94,7 @@ public class MenuUI {
                 if (gestor.agregarVehiculo(vp)) {
                     System.out.println("Vehículo de pasajeros agregado exitosamente.");
                 } else {
-                    System.out.println("Error: La patente ya está registrada. Intente con otra.");
+                    System.out.println("La patente ya está registrada. Intente con otra.");
                 }
                 break;
             }

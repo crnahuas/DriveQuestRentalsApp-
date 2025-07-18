@@ -3,14 +3,14 @@ package com.crnahuas.drivequestapp.modelo;
 // Clase que representa un vehículo de carga.
 public class VehiculoCarga extends Vehiculo implements Calculable {
 
-    private double cargaMaximaKg; // Capacidad máxima de carga en kilogramos
+    private double cargaMaximaKg; // Capacidad máxima de carga en kilogramos.
 
-    // Constructor vacío requerido por la pauta.
+    // Constructor vacío..
     public VehiculoCarga() {
         super();
     }
 
-    // Constructor sobrecargado para inicializar un vehículo de carga.
+    // Constructor.
     public VehiculoCarga(String patente, String marca, int diasArriendo, double cargaMaximaKg) {
         this.patente = patente;
         this.marca = marca;
@@ -23,10 +23,10 @@ public class VehiculoCarga extends Vehiculo implements Calculable {
     }
 
     public void setCargaMaximaKg(double cargaMaximaKg) {
-        if (cargaMaximaKg > 0) {
+        if (cargaMaximaKg > 0 && cargaMaximaKg <= 30000) { // Suponiendo Por ejemplo, límite razonable para camión.
             this.cargaMaximaKg = cargaMaximaKg;
         } else {
-            throw new IllegalArgumentException("La carga máxima debe ser mayor a 0.");
+            throw new IllegalArgumentException("La carga máxima debe estar entre 1 y 30000 kg.");
         }
     }
 
@@ -39,11 +39,11 @@ public class VehiculoCarga extends Vehiculo implements Calculable {
     // Calcula y muestra el detalle de la boleta del vehículo de carga.
     @Override
     public void mostrarBoleta() {
-        double subtotal = diasArriendo * 50000; // Precio fijo diario para vehículos de carga
+        double subtotal = diasArriendo * 50000; // Precio fijo diario para vehículos de carga.
         double iva = subtotal * IVA;
         double descuento = 0;
 
-        // Supuesto: Aplica descuento si la carga máxima es mayor a 500 kg
+        // Supuesto: Aplica descuento si la carga máxima es mayor a 500 kg.
         if (cargaMaximaKg > 500) {
             descuento = subtotal * DESCUENTO_CARGA;
         }
@@ -60,7 +60,7 @@ public class VehiculoCarga extends Vehiculo implements Calculable {
         System.out.println("TOTAL: $" + String.format("%,.0f", total));
     }
 
-    // Exporta los datos del vehículo de carga como texto plano.
+    // Exporta los datos del vehículo de carga.
     @Override
     public String exportarComoTexto() {
         return String.format("carga,%s,%s,%d,%.2f", patente, marca, diasArriendo, cargaMaximaKg);

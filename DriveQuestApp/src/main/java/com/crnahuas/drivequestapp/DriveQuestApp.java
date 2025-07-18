@@ -22,6 +22,6 @@ public class DriveQuestApp {
         // Guardar vehículos antes de salir.
         gestor.guardarVehiculosEnArchivo("vehiculos.txt");
 
-        System.out.println("\nGracias por utilizar el sistema DriveQuest. Hasta pronto.");
+        System.out.println("\nGracias por utilizar el sistema DriveQuest Rental. Hasta pronto.");
     }
 }

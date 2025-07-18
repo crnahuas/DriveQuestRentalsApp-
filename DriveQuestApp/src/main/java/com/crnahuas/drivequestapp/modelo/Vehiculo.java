@@ -3,15 +3,15 @@ package com.crnahuas.drivequestapp.modelo;
 // Clase abstracta que representa un Vehículo.
 public abstract class Vehiculo {
 
-    protected String patente; // Identificador único del vehículo
-    protected String marca; // Marca del vehículo
-    protected int diasArriendo; // Días por los que se arrienda el vehículo
+    protected String patente; // Patente del vehículo.
+    protected String marca; // Marca del vehículo.
+    protected int diasArriendo; // Días de arriendo del vehículo.
 
-    // Constructor vacío requerido por la pauta.
+    // Constructor vacío.
     public Vehiculo() {
     }
 
-    // Constructor sobrecargado para inicializar los atributos comunes del vehículo.
+    // Constructor.
     public Vehiculo(String patente, String marca, int diasArriendo) {
         this.patente = patente;
         this.marca = marca;
@@ -23,11 +23,11 @@ public abstract class Vehiculo {
     }
 
     public void setPatente(String patente) {
-        // Validación básica del formato de patente chilena (ejemplo: CLPM23)
+        // Validación básica patente (ejemplo: CLPM23).
         if (patente != null && patente.matches("^[A-Z]{4}[0-9]{2}$")) {
             this.patente = patente;
         } else {
-            throw new IllegalArgumentException("Patente inválida. Use el formato chileno: 4 letras y 2 números, ej. CLPM23.");
+            throw new IllegalArgumentException("Patente inválida. Ejemplo de formato: CLPM23.");
         }
     }
 
@@ -51,9 +51,9 @@ public abstract class Vehiculo {
         }
     }
 
-    // Método abstracto que debe implementar cada tipo de vehículo para mostrar sus datos.
+    // Método abstracto para mostrar datos del vehículo.
     public abstract void mostrarDatos();
 
-    // Método abstracto que debe implementar cada tipo de vehículo para exportarse como texto.
+    // Método abstracto de vehículos para exportarse como txt.
     public abstract String exportarComoTexto();
 }
