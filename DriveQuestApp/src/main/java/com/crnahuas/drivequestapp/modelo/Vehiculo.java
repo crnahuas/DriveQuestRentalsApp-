@@ -1,34 +1,20 @@
 package com.crnahuas.drivequestapp.modelo;
 
 // Clase abstracta que representa un Vehículo.
+// Clase base abstracta para todos los vehículos.
 public abstract class Vehiculo {
 
-    protected String patente; // Patente del vehículo.
-    protected String marca; // Marca del vehículo.
-    protected int diasArriendo; // Días de arriendo del vehículo.
+    protected String patente;          // Patente del vehículo.
+    protected String marca;            // Marca del vehículo.
+    protected int diasArriendo;        // Cantidad de días que se arrienda el vehículo.
 
-    // Constructor vacío.
-    public Vehiculo() {
-    }
-
-    // Constructor.
-    public Vehiculo(String patente, String marca, int diasArriendo) {
-        this.patente = patente;
-        this.marca = marca;
-        this.diasArriendo = diasArriendo;
-    }
-
+    // Getters y Setters
     public String getPatente() {
         return patente;
     }
 
     public void setPatente(String patente) {
-        // Validación básica patente (ejemplo: CLPM23).
-        if (patente != null && patente.matches("^[A-Z]{4}[0-9]{2}$")) {
-            this.patente = patente;
-        } else {
-            throw new IllegalArgumentException("Patente inválida. Ejemplo de formato: CLPM23.");
-        }
+        this.patente = patente;
     }
 
     public String getMarca() {
@@ -44,16 +30,15 @@ public abstract class Vehiculo {
     }
 
     public void setDiasArriendo(int diasArriendo) {
-        if (diasArriendo > 0) {
-            this.diasArriendo = diasArriendo;
-        } else {
-            throw new IllegalArgumentException("La cantidad de días de arriendo debe ser mayor a 0.");
-        }
+        this.diasArriendo = diasArriendo;
     }
 
-    // Método abstracto para mostrar datos del vehículo.
+    // Mostrar la boleta de arriendo.
+    public abstract void mostrarBoleta();
+
+    // Mostrar datos básicos.
     public abstract void mostrarDatos();
 
-    // Método abstracto de vehículos para exportarse como txt.
+    // Exportar los datos del vehículo en .txt
     public abstract String exportarComoTexto();
 }

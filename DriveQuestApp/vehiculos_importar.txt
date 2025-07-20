@@ -1,0 +1,10 @@
+carga,CL1111,Volvo
+pasajeros,CP2222,Hyundai
+carga,CL3333,Scania
+pasajeros,CP4444,Kia
+carga,CL5555,Mercedes
+pasajeros,CP6666,Toyota
+carga,CL7777,MAN
+pasajeros,CP8888,Chevrolet
+carga,CL9999,Iveco
+pasajeros,CP0000,Nissan

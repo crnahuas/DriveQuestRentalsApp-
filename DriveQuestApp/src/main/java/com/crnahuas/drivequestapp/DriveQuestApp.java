@@ -13,14 +13,11 @@ public class DriveQuestApp {
         FlotillaManager gestor = new FlotillaManager();
 
         // Cargar vehículos desde archivo si existe.
-        gestor.cargarVehiculosDesdeArchivo("vehiculos.txt");
+        gestor.cargarVehiculosDesdeArchivo("vehiculos_base.txt");
 
         // Interfaz de usuario por consola.
         MenuUI menu = new MenuUI(gestor);
         menu.iniciar();
-
-        // Guardar vehículos antes de salir.
-        gestor.guardarVehiculosEnArchivo("vehiculos.txt");
 
         System.out.println("\nGracias por utilizar el sistema DriveQuest Rental. Hasta pronto.");
     }

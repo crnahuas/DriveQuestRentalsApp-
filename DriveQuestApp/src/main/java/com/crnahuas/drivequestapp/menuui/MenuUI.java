@@ -11,8 +11,8 @@ import java.util.Scanner;
 // Clase que representa el menú de usuario por consola.
 public class MenuUI {
 
-    private FlotillaManager gestor;
-    private Scanner scanner;
+    private final FlotillaManager gestor;
+    private final Scanner scanner;
 
     // Constructor que recibe el gestor de flotilla y prepara el escáner.
     public MenuUI(FlotillaManager gestor) {
@@ -29,41 +29,41 @@ public class MenuUI {
 
             switch (opcion) {
                 case 1 ->
-                    agregarVehiculo();
+                    agregarVehiculo(); // Agrega nuevos vehículos de forma manual.
                 case 2 ->
-                    gestor.listarVehiculos();
+                    gestor.listarVehiculos(); // Vehículos disponibles.
                 case 3 ->
-                    mostrarBoletas();
+                    gestor.mostrarBoletas(); // Muestra boletas de vehículos arrendados.
                 case 4 ->
-                    gestor.mostrarArriendosLargos();
+                    gestor.mostrarArriendosLargos(); // Muestra los arriendos de 7 días o más.
                 case 5 ->
-                    gestor.guardarVehiculosEnArchivo("vehiculos.txt");
+                    gestor.guardarVehiculosEnArchivo(); // Exporta vehículos arrendados.
                 case 6 ->
-                    gestor.cargarVehiculosDesdeArchivo("vehiculos.txt");
-                case 0 ->{
-                    System.out.println("Guardando vehículos...");
-                    gestor.guardarVehiculosEnArchivo("vehiculos.txt");
-                    System.out.println("Gracias por usar DriveQuest Rental. ¡Hasta pronto!");
-                }
+                    gestor.cargarVehiculosDesdeArchivo("vehiculos_importar.txt"); // Lista de nuevo vehículos.
+                case 7 ->
+                    arrendarVehiculoDesdeLista(); // Permite arrendar un vehículo.
+                case 0 ->
+                    System.out.println("Saliendo del sistema...");
                 default ->
                     System.out.println("Opción no válida. Intente nuevamente.");
             }
         } while (opcion != 0);
     }
 
-    //  Muestra el menú principal en consola.
+    // Muestra el menú principal
     private void mostrarMenu() {
-        System.out.println("\n==== MENÚ PRINCIPAL ====");
+        System.out.println("\n==== MENÚ PRINCIPAL ====\n");
         System.out.println("1. Agregar vehículo");
         System.out.println("2. Listar vehículos");
         System.out.println("3. Mostrar boletas");
         System.out.println("4. Mostrar arriendos largos (Desde 7 días)");
         System.out.println("5. Exportar vehículos");
         System.out.println("6. Importar vehículos");
+        System.out.println("7. Arrendar vehículo");
         System.out.println("0. Salir");
     }
 
-    // Permite al usuario agregar un nuevo vehículo con validación.
+    // Permite agregar un nuevo vehículo a la lista (evita duplicados)
     private void agregarVehiculo() {
         System.out.println("\n-- Agregar Vehículo --");
         System.out.println("Seleccione el tipo de vehículo:");
@@ -75,50 +75,74 @@ public class MenuUI {
         String patente = scanner.nextLine();
         System.out.print("Marca: ");
         String marca = scanner.nextLine();
-        int dias = leerEntero("Días de arriendo: ");
 
         switch (tipo) {
             case 1 -> {
-                double carga = leerDecimal("Carga máxima en kg: ");
-                VehiculoCarga vc = new VehiculoCarga(patente, marca, dias, carga);
+                VehiculoCarga vc = new VehiculoCarga(patente, marca, 0, 0);
                 if (gestor.agregarVehiculo(vc)) {
                     System.out.println("Vehículo de carga agregado exitosamente.");
                 } else {
-                    System.out.println("La patente ya está registrada. Intente con otra.");
+                    System.out.println("Error: La patente ya está registrada.");
                 }
-                break;
             }
             case 2 -> {
-                int pasajeros = leerEntero("Cantidad de pasajeros: ");
-                VehiculoPasajeros vp = new VehiculoPasajeros(patente, marca, dias, pasajeros);
+                VehiculoPasajeros vp = new VehiculoPasajeros(patente, marca, 0, 0);
                 if (gestor.agregarVehiculo(vp)) {
                     System.out.println("Vehículo de pasajeros agregado exitosamente.");
                 } else {
-                    System.out.println("La patente ya está registrada. Intente con otra.");
+                    System.out.println("Error: La patente ya está registrada.");
                 }
-                break;
             }
             default ->
-                System.out.println("Opción no válida. Intente nuevamente.");
+                System.out.println("Opción inválida.");
         }
     }
 
-    // Muestra las boletas individuales de cada vehículo implementado.
-    private void mostrarBoletas() {
-        System.out.println("\n-- Boletas de Arriendo --");
+    // Permite arrendar un vehículo existente y completar sus datos.
+    private void arrendarVehiculoDesdeLista() {
         List<Vehiculo> lista = gestor.obtenerListaVehiculos();
         if (lista.isEmpty()) {
-            System.out.println("No hay vehículos para mostrar boletas.");
+            System.out.println("No hay vehículos disponibles para arriendo.");
             return;
         }
-        for (Vehiculo v : lista) {
-            if (v instanceof Calculable c) {
-                c.mostrarBoleta();
-            }
+
+        System.out.println("\n-- Seleccionar Vehículo para Arriendo --");
+        for (int i = 0; i < lista.size(); i++) {
+            System.out.print("[" + (i + 1) + "] ");
+            lista.get(i).mostrarDatos();
         }
+
+        int opcion = leerEntero("Seleccione el número del vehículo a arrendar: ");
+        if (opcion < 1 || opcion > lista.size()) {
+            System.out.println("Opción inválida.");
+            return;
+        }
+
+        Vehiculo seleccionado = lista.get(opcion - 1);
+        int dias = leerEntero("Ingrese la cantidad de días de arriendo: ");
+        seleccionado.setDiasArriendo(dias);
+
+        if (seleccionado instanceof VehiculoCarga vc) {
+            double nuevaCarga = leerDecimal("Ingrese la carga máxima en kg: ");
+            vc.setCargaMaximaKg(nuevaCarga);
+        } else if (seleccionado instanceof VehiculoPasajeros vp) {
+            int pasajeros = leerEntero("Ingrese la cantidad de pasajeros: ");
+            vp.setCantidadPasajeros(pasajeros);
+        }
+
+        // Muestra boleta al arrendar
+        if (seleccionado instanceof Calculable calc) {
+            calc.mostrarBoleta();
+        }
+
+        // Elimina el vehículo de la lista original y lo agrega a la lista de arrendados.
+        gestor.eliminarVehiculo(seleccionado);
+        gestor.registrarVehiculoArrendado(seleccionado);
+
+        System.out.println("El vehículo fue arrendado correctamente.");
     }
 
-    // Lee y valida un número entero desde consola.
+    // Lee un número entero desde consola con validación.
     private int leerEntero(String mensaje) {
         while (true) {
             try {
@@ -130,7 +154,7 @@ public class MenuUI {
         }
     }
 
-    // Lee y valida un número decimal desde consola.
+    // Lee un número decimal desde consola con validación.
     private double leerDecimal(String mensaje) {
         while (true) {
             try {

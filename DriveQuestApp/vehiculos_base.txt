@@ -1,0 +1,10 @@
+carga,CL1001,Volvo
+pasajeros,CP2002,Hyundai
+carga,CL3003,Scania
+pasajeros,CP4004,Kia
+carga,CL5005,Mercedes
+pasajeros,CP6006,Toyota
+carga,CL7007,MAN
+pasajeros,CP8008,Chevrolet
+carga,CL9009,Iveco
+pasajeros,CP1010,Nissan
